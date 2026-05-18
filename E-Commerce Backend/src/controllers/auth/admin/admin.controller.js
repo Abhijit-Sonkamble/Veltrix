@@ -64,13 +64,13 @@ module.exports.loginAdmin = async(req, res) => {
       const admin = await adminServiceAuth.fetchSingleAdmin({email: req.body.email, isDelete : false, isActive : true}, false);
 
       if (!admin) {
-        return res.status(statusCode.BAD_REQUEST).json(errorRes(statusCode.BAD_REQUEST, true, MSG.ADMIN_NOT_FOUND));
+        return res.json(errorRes(statusCode.BAD_REQUEST, true, MSG.ADMIN_NOT_FOUND));
         }
 
      const isPassword = await bcrypt.compare(req.body.password, admin.password); // ithe compare madhe compare(jithun password yetoy, encrypt password kuthun yetoy te);
 
      if (!isPassword) {
-        return res.status(statusCode.BAD_REQUEST).json(errorRes(statusCode.BAD_REQUEST, true, MSG.INVALID_CREDENTIALS));
+        return res.json(errorRes(statusCode.BAD_REQUEST, true, MSG.INVALID_CREDENTIALS));
      }
 
 
@@ -83,7 +83,7 @@ module.exports.loginAdmin = async(req, res) => {
      const token = jwt.sign(payload, process.env.SECRET_KEY );
 
 
-        return res.status(statusCode.OK).json(successRes(statusCode.OK, false, MSG.ADMIN_LOGIN_SUCCESS, {token})); //ithe aapn newAdmin pass kela tyamule aapn data fetch karu shakto postman madhe and console madhe
+        return res.json(successRes(statusCode.OK, false, MSG.ADMIN_LOGIN_SUCCESS, {token})); //ithe aapn newAdmin pass kela tyamule aapn data fetch karu shakto postman madhe and console madhe
    } catch (err) {
        console.log("Error : ", err)
    }
@@ -98,7 +98,7 @@ module.exports.forgotPassword = async (req, res) => {
     const admin = await adminServiceAuth.fetchSingleAdmin({ email: req.body.email, isDelete : false, isActive : true }, false);
 
     if (!admin) {
-             return res.status(statusCode.BAD_REQUEST).json(errorRes(statusCode.BAD_REQUEST, true, MSG.ADMIN_NOT_FOUND));
+             return res.json(errorRes(statusCode.BAD_REQUEST, true, MSG.ADMIN_NOT_FOUND));
     }
 
     // Kiti vela nantar expire over zali pahije
@@ -109,7 +109,7 @@ module.exports.forgotPassword = async (req, res) => {
 
     //Otp attempt
     if (admin.attempt >= 3) {
-      return res.status(statusCode.BAD_REQUEST).json(errorRes(statusCode.BAD_REQUEST, true, MSG.TOO_MANY_ATTEMPTS));
+      return res.json(errorRes(statusCode.BAD_REQUEST, true, MSG.TOO_MANY_ATTEMPTS));
     }
 
     const OTP = Math.floor(100000 + Math.random() * 900000);
@@ -128,7 +128,7 @@ module.exports.forgotPassword = async (req, res) => {
 
 
 
-    return res.status(statusCode.OK).json(successRes(statusCode.OK, false, MSG.OTP_SENT_SUCCESS));
+    return res.json(successRes(statusCode.OK, false, MSG.OTP_SENT_SUCCESS));
 
   } catch (err) {
     console.log("Error in forgot : ", err);
@@ -142,7 +142,7 @@ module.exports.verifyOTP = async (req, res) => {
    const admin = await adminServiceAuth.fetchSingleAdmin({ email: req.body.email, isDelete : false, isActive : true }, false);
 
     if (!admin) {
-             return res.status(statusCode.BAD_REQUEST).json(errorRes(statusCode.BAD_REQUEST, true, MSG.ADMIN_NOT_FOUND));
+             return res.json(errorRes(statusCode.BAD_REQUEST, true, MSG.ADMIN_NOT_FOUND));
     }
 
     //Verify otp chi timing set karte
@@ -152,12 +152,12 @@ module.exports.verifyOTP = async (req, res) => {
 
    // Verify attempt limit
     if (admin.verify_attempt >= 3) {
-      return res.status(statusCode.BAD_REQUEST).json(errorRes(statusCode.BAD_REQUEST, true, MSG.MANY_ATTEMPTS));
+      return res.json(errorRes(statusCode.BAD_REQUEST, true, MSG.MANY_ATTEMPTS));
     }
     
     //Check expire otp time
     if (Date.now() > admin.OTP_Expire) {
-      return res.status(statusCode.BAD_REQUEST).json(errorRes(statusCode.BAD_REQUEST, true, MSG.OTP_EXPIRED))
+      return res.json(errorRes(statusCode.BAD_REQUEST, true, MSG.OTP_EXPIRED))
       
     }
 
