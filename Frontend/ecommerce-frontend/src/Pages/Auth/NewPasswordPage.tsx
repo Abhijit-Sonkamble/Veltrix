@@ -1,179 +1,369 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router";
 import { SetNewPassword } from "../../services/auth/authService";
-// import { updatePasswordService } from "../../services/auth/authService"; 
+import {
+  Lock,
+  Eye,
+  EyeOff,
+  Shield,
+  Sparkles,
+  KeyRound,
+  ArrowRight,
+} from "lucide-react";
 
 export default function NewPasswordPage() {
-  const [newPasswordData, setNewPasswordData] = useState({ newPassword: "", changePassword: "" });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loader, setLoader] = useState<boolean>(false);
+  const [newPasswordData, setNewPasswordData] =
+    useState({
+      newPassword: "",
+      changePassword: "",
+    });
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [loader, setLoader] =
+    useState<boolean>(false);
+
   const navigate = useNavigate();
 
-  const onFormSubmit = async (event: any) => {
+  const onFormSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
-    if (!newPasswordData.newPassword || !newPasswordData.changePassword) {
-      return toast.error("Please fill all fields");
+    if (
+      !newPasswordData.newPassword ||
+      !newPasswordData.changePassword
+    ) {
+      return toast.error(
+        "Please fill all fields"
+      );
     }
 
-    if (newPasswordData.newPassword.length < 6) {
-      return toast.error("Password must be at least 6 characters long");
+    if (
+      newPasswordData.newPassword.length < 6
+    ) {
+      return toast.error(
+        "Password must be at least 6 characters long"
+      );
     }
 
-    if (newPasswordData.newPassword !== newPasswordData.changePassword) {
-      return toast.error("Passwords do not match!");
+    if (
+      newPasswordData.newPassword !==
+      newPasswordData.changePassword
+    ) {
+      return toast.error(
+        "Passwords do not match!"
+      );
     }
 
-    setLoader(true);
+    try {
+      setLoader(true);
 
-    // Call your MVC backend service wrapper here:
-    const data = await SetNewPassword(newPasswordData.newPassword);
-    if (data.status === 200) {
-      toast.success("Password updated successfully!");
-      navigate("/login");
+      const data =
+        await SetNewPassword(
+          newPasswordData.newPassword
+        );
 
-      sessionStorage.clear();
-    } else {
-      toast.error(data.message || "Failed to update password");
-    }
+      if (data.status === 200) {
+        toast.success(
+          "Password updated successfully!"
+        );
 
+        sessionStorage.clear();
 
+        navigate("/login");
+      } else {
+        toast.error(
+          data.message ||
+            "Failed to update password"
+        );
+      }
+    } finally {
       setLoader(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e27] flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-blue-600 rounded-full blur-[120px] opacity-20"></div>
-      <div className="absolute bottom-10 right-10 w-64 h-64 bg-indigo-500 rounded-full blur-[150px] opacity-10"></div>
+    <div className="min-h-screen bg-[#0A0F1E] flex items-center justify-center p-4 relative overflow-hidden">
 
-      {/* Main Login Card */}
-      <div className="w-full max-w-md z-10">
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2rem] shadow-2xl">
-          
-          {/* Header/Security Icon Section */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-blue-700 flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <h2 className="text-white text-2xl font-bold tracking-tight">
-              Create New Password
-            </h2>
-            <p className="text-indigo-200/60 text-xs mt-1 uppercase tracking-widest">
-              Secure Your Account
-            </p>
-          </div>
+      {/* background */}
 
-          <form className="space-y-6" onSubmit={onFormSubmit}>
-            {/* New Password Field */}
-            <div className="space-y-2 relative">
-              <label className="text-indigo-100 text-sm font-medium ml-1">
-                New Password
-              </label>
-              <div className="relative">
-                <input
-                  required
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={newPasswordData.newPassword}
-                  onChange={(e) => {
-                    setNewPasswordData((prev) => ({ ...prev, newPassword: e.target.value }));
-                  }}
-                  className="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all pr-12"
-                />
-                
-                {/* Visibility Toggle Button */}
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-4 flex items-center text-white/30 hover:text-white/70 transition-colors"
-                >
-                  {showPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                  )}
-                </button>
-              </div>
-            </div>
+      <div className="absolute inset-0 overflow-hidden">
 
-            {/* Confirm Password Field */}
-            <div className="space-y-2">
-              <label className="text-indigo-100 text-sm font-medium ml-1">
-                Confirm Password
-              </label>
-              <input
-                required
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={newPasswordData.changePassword}
-                onChange={(e) => {
-                  setNewPasswordData((prev) => ({
-                    ...prev,
-                    changePassword: e.target.value,
-                  }));
-                }}
-                className="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-              />
-            </div>
+        <div className="absolute inset-0 bg-linear-to-br from-[#0A0F1E] via-[#0F1629] to-[#0A0F1E]" />
 
-            {/* Submit / Reset Action Button */}
-            <button
-              type="submit"
-              disabled={loader}
-              className={`
-                relative overflow-hidden w-full font-bold py-3.5 rounded-2xl transition-all duration-300 active:scale-95
-                flex items-center justify-center mt-2
-                ${loader
-                  ? "bg-indigo-700 cursor-not-allowed"
-                  : "bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white shadow-lg shadow-indigo-900/40"
-                }
-              `}
-            >
-              {loader ? (
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div className="h-5 w-5 rounded-full border-2 border-white/20"></div>
-                    <div className="absolute top-0 left-0 h-5 w-5 rounded-full border-t-2 border-white animate-spin"></div>
-                  </div>
-                  <span className="tracking-wide animate-pulse">
-                    Updating Password...
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]"></div>
-                </div>
-              ) : (
-                <span className="flex items-center gap-2 uppercase tracking-wider text-xs font-bold">
-                  Save Changes
-                  <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                  </svg>
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] animate-pulse"></div>
+
+        <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] animate-pulse"></div>
+
+        <div className="absolute top-1/2 left-1/2 w-162.5 h-162.5 bg-blue-500/5 rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2"></div>
+
+      </div>
+
+      <div className="relative w-full max-w-5xl bg-white/3 backdrop-blur-2xl rounded-3xl border border-white/10 overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,.7)]">
+
+        <div className="flex flex-col lg:flex-row">
+
+          {/* left */}
+
+          <div className="lg:w-1/2 bg-linear-to-br from-[#0F1629] via-[#0A0F1E] to-[#0F1629] p-10 flex flex-col justify-between">
+
+            <div>
+
+              <div className="flex items-center gap-2 mb-12">
+
+                <KeyRound className="w-8 h-8 text-amber-400"/>
+
+                <span className="text-2xl font-bold text-white">
+                  Password Reset
                 </span>
-              )}
-            </button>
-          </form>
 
-          {/* Return Options navigation */}
-          <div className="mt-8 text-center">
-            <Link 
-              to="/login" 
-              className="inline-flex items-center gap-2 text-indigo-300/60 hover:text-white transition-colors text-xs uppercase tracking-widest font-semibold group"
-            >
-              <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Back to Login
-            </Link>
+                <Sparkles className="w-4 h-4 text-amber-400"/>
+
+              </div>
+
+              <div className="space-y-6">
+
+                <div className="inline-flex gap-2 items-center px-3 py-1 rounded-full bg-white/5 border border-white/10">
+
+                  <Shield className="w-4 h-4 text-amber-400"/>
+
+                  <span className="text-xs text-amber-400">
+                    SECURE ACCESS
+                  </span>
+
+                </div>
+
+                <h1 className="text-5xl font-bold text-white leading-tight">
+
+                  Create your
+                  <span className="block bg-linear-to-r from-amber-400 to-white bg-clip-text text-transparent">
+                    new password
+                  </span>
+
+                </h1>
+
+                <p className="text-gray-400 leading-relaxed">
+
+                  Your password should be secure,
+                  memorable and hard to guess.
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="border-t border-white/10 pt-6 mt-10">
+
+              <div className="flex gap-3">
+
+                <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+
+                  <Shield className="w-5 h-5 text-amber-400"/>
+
+                </div>
+
+                <div>
+
+                  <p className="text-white text-sm">
+                    End-to-End Protected
+                  </p>
+
+                  <p className="text-gray-500 text-xs">
+                    Secure password update flow
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
+
+          {/* right */}
+
+          <div className="lg:w-1/2 p-10 flex items-center">
+
+            <div className="w-full max-w-md mx-auto">
+
+              <div className="mb-8">
+
+                <h2 className="text-white text-3xl font-bold">
+                  Set Password
+                </h2>
+
+                <p className="text-gray-400 text-sm mt-2">
+                  Create a strong password
+                </p>
+
+              </div>
+
+              <form
+                className="space-y-6"
+                onSubmit={onFormSubmit}
+              >
+
+                {/* new password */}
+
+                <div>
+
+                  <label className="text-gray-300 text-sm block mb-2">
+
+                    New Password
+
+                  </label>
+
+                  <div className="relative">
+
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5"/>
+
+                    <input
+                      value={
+                        newPasswordData.newPassword
+                      }
+                      onChange={(e) =>
+                        setNewPasswordData(
+                          (prev) => ({
+                            ...prev,
+                            newPassword:
+                              e.target.value,
+                          })
+                        )
+                      }
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      placeholder="••••••••"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-12 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          !showPassword
+                        )
+                      }
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-amber-400"
+                    >
+                      {showPassword ? (
+                        <EyeOff />
+                      ) : (
+                        <Eye />
+                      )}
+                    </button>
+
+                  </div>
+
+                </div>
+
+                {/* confirm */}
+
+                <div>
+
+                  <label className="text-gray-300 text-sm block mb-2">
+
+                    Confirm Password
+
+                  </label>
+
+                  <div className="relative">
+
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5"/>
+
+                    <input
+                      value={
+                        newPasswordData.changePassword
+                      }
+                      onChange={(e) =>
+                        setNewPasswordData(
+                          (prev) => ({
+                            ...prev,
+                            changePassword:
+                              e.target.value,
+                          })
+                        )
+                      }
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      placeholder="••••••••"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+
+                  </div>
+
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loader}
+                  className={`w-full rounded-xl py-4 font-semibold transition-all duration-300 flex items-center justify-center gap-2
+
+                  ${
+                    loader
+                      ? "bg-gray-700"
+                      : "bg-linear-to-r from-amber-500 to-amber-600 hover:scale-[1.02] hover:shadow-lg hover:shadow-amber-500/30"
+                  }
+                  `}
+                >
+
+                  {loader ? (
+                    <div className="flex items-center gap-3">
+
+                      <div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
+
+                      Updating...
+
+                    </div>
+                  ) : (
+                    <>
+                      Save Password
+                      <ArrowRight className="w-4 h-4"/>
+                    </>
+                  )}
+
+                </button>
+
+              </form>
+
+              <div className="mt-8 text-center">
+
+                <Link
+                  to="/login"
+                  className="text-gray-400 hover:text-amber-400 transition"
+                >
+                  ← Back to Login
+                </Link>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
-        {/* Brand Footer */}
-        <p className="text-center text-white/20 text-[10px] mt-6 tracking-[0.3em] uppercase">
-          Global Goods Nocturnal Essentials
-        </p>
       </div>
+
+      <div className="absolute bottom-6 text-center w-full">
+
+        <p className="text-[10px] text-gray-600 tracking-[0.3em] uppercase">
+
+          Global Goods Nocturnal Essentials
+
+        </p>
+
+      </div>
+
     </div>
   );
 }

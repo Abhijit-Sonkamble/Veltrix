@@ -1,179 +1,344 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { loginAdmin } from "../../services/auth/authService";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  LogIn,
+  ShoppingBag,
+  ArrowRight,
+  Sparkles,
+  Shield,
+  Zap,
+} from "lucide-react";
 
 export default function LoginPage() {
-  const [loginData, setloginData] = useState({ email: "", password: "" });
-  const [loader, setLoader] = useState<boolean>(false);
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [loader, setLoader] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
-  const onFormSubmit = async (event: any) => {
+  const onFormSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
-    setLoader(true); //Loading
+    try {
+      setLoader(true);
 
-    console.log("Login Data : ", loginData);
+      console.log("Login Data:", loginData);
 
-    const data = await loginAdmin(loginData);
+      const data = await loginAdmin(loginData);
 
-    if (data.status === 200) {
-      //Dusrya page la send karayche
-      toast.success(data.message);
-      navigate("/dashboard");
+      if (data.status === 200) {
+        toast.success(data.message);
 
-      localStorage.setItem("adminToken", data.result.token); //local storage madhe token save karun thevayche jyane logout nahi honar
-    } else {
-      //Tyach page la thevayche
-      toast.error(data.message);
-      navigate("/login");
+        localStorage.setItem(
+          "adminToken",
+          data.result.token
+        );
+
+        navigate("/dashboard");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Something went wrong");
+    } finally {
+      setLoader(false);
     }
-
-    setLoader(false);
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e27] flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Decorative Background Elements to match the image */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-blue-600 rounded-full blur-[120px] opacity-20"></div>
-      <div className="absolute bottom-10 right-10 w-64 h-64 bg-indigo-500 rounded-full blur-[150px] opacity-10"></div>
+    <div className="min-h-screen bg-[#0A0F1E] flex items-center justify-center p-4 relative overflow-hidden">
 
-      {/* Main Login Card */}
-      <div className="w-full max-w-md z-10">
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2rem] shadow-2xl">
-          {/* Avatar Section */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-20 h-20 rounded-full border-2 border-indigo-400/50 p-1 mb-4 shadow-lg shadow-indigo-500/20">
-              <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
-                alt="Avatar"
-                className="rounded-full bg-indigo-100"
-              />
-            </div>
-            <h2 className="text-white text-2xl font-bold tracking-tight">
-              LOGIN
-            </h2>
-            <p className="text-indigo-200/60 text-xs mt-1 uppercase tracking-widest">
-              Welcome Back
-            </p>
-          </div>
+      {/* Background */}
+      <div className="absolute inset-0">
 
-          <form className="space-y-6" onSubmit={onFormSubmit}>
-            {/* Email Field */}
-            <div className="space-y-2">
-              <label className="text-indigo-100 text-sm font-medium ml-1">
-                Email Address
-              </label>
-              <input
-                onChange={(e) => {
-                  setloginData((prev) => ({ ...prev, email: e.target.value }));
-                }}
-                type="email"
-                placeholder="username@email.com"
-                className="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-              />
-            </div>
+        <div className="absolute inset-0 bg-linear-to-br from-[#0A0F1E] via-[#0F1629] to-[#0A0F1E]" />
 
-            {/* Password Field */}
-            <div className="space-y-2">
-              <label className="text-indigo-100 text-sm font-medium ml-1">
-                Password
-              </label>
-              <input
-                onChange={(e) => {
-                  setloginData((prev) => ({
-                    ...prev,
-                    password: e.target.value,
-                  }));
-                }}
-                type="password"
-                placeholder="••••••••"
-                className="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-              />
-            </div>
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] animate-pulse"></div>
 
-            {/* Actions */}
-            <div className="flex items-center justify-between px-1 text-xs">
-              <label className="flex items-center text-indigo-200/70 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mr-2 accent-indigo-500 rounded"
-                />
-                Remember me
-              </label>
-              <Link
-                to={"/forgot-password"}
-                className="text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                Forgot password?
-              </Link>
-            </div>
+        <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse"></div>
 
-            {/* Login Button */}
-            <button
-              type="submit"
-              disabled={loader}
-              className={`
-    relative overflow-hidden w-full font-bold py-3.5 rounded-2xl transition-all duration-300 active:scale-95
-    flex items-center justify-center
-    ${
-      loader
-        ? "bg-indigo-700 cursor-not-allowed"
-        : "bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white shadow-lg shadow-indigo-900/40"
-    }
-  `}
-            >
-              {loader ? (
-                <div className="flex items-center gap-3">
-                  {/* Sleek Ring Loader */}
-                  <div className="relative">
-                    <div className="h-5 w-5 rounded-full border-2 border-white/20"></div>
-                    <div className="absolute top-0 left-0 h-5 w-5 rounded-full border-t-2 border-white animate-spin"></div>
-                  </div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-amber-400/5 rounded-full blur-[150px]" />
 
-                  {/* Animated Text */}
-                  <span className="tracking-wide animate-pulse">
-                    Authenticating...
+      </div>
+
+      {/* Main Card */}
+
+      <div className="relative w-full max-w-6xl bg-white/2 backdrop-blur-2xl rounded-3xl border border-white/10 overflow-hidden">
+
+        <div className="flex flex-col lg:flex-row">
+
+          {/* Left Side */}
+
+          <div className="lg:w-1/2 bg-linear-to-br from-[#0F1629] via-[#0A0F1E] to-[#0F1629] p-10 flex flex-col justify-between">
+
+            <div>
+
+              <div className="flex items-center gap-2 mb-10">
+                <ShoppingBag className="w-8 h-8 text-amber-400" />
+
+                <span className="text-white text-2xl font-bold">
+                  LuxeCart
+                </span>
+
+                <Sparkles className="text-amber-400 w-4 h-4" />
+              </div>
+
+              <div className="space-y-5">
+
+                <div className="inline-flex gap-2 items-center px-3 py-1 rounded-full bg-white/5">
+
+                  <Shield className="w-4 h-4 text-amber-400" />
+
+                  <span className="text-xs text-amber-400">
+                    SECURE ACCESS
                   </span>
 
-                  {/* Background Shimmer Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]"></div>
                 </div>
-              ) : (
-                <span className="flex items-center gap-2">
-                  Log in
-                  <svg
-                    className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                    />
-                  </svg>
-                </span>
-              )}
-            </button>
-          </form>
 
-          {/* Footer */}
-          <p className="text-center text-indigo-200/50 text-sm mt-8">
-            New here?{" "}
-            <a href="#" className="text-white font-semibold hover:underline">
-              Create Account
-            </a>
-          </p>
+                <h1 className="text-white text-5xl font-bold leading-tight">
+                  Welcome Back
+                  <span className="block text-amber-400">
+                    Premium Shopping
+                  </span>
+                </h1>
+
+                <p className="text-gray-400">
+                  Sign in to access exclusive deals and
+                  premium features.
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mt-12">
+
+              <div className="flex gap-3">
+
+                <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+
+                  <Zap className="w-4 h-4 text-amber-400" />
+
+                </div>
+
+                <div>
+
+                  <p className="text-white text-sm">
+                    Express Delivery
+                  </p>
+
+                  <p className="text-gray-500 text-xs">
+                    Free on $50+
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="flex gap-3">
+
+                <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+
+                  <Shield className="w-4 h-4 text-amber-400" />
+
+                </div>
+
+                <div>
+
+                  <p className="text-white text-sm">
+                    Secure Payment
+                  </p>
+
+                  <p className="text-gray-500 text-xs">
+                    Protected
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Right */}
+
+          <div className="lg:w-1/2 p-10">
+
+            <div className="max-w-md mx-auto">
+
+              <div className="text-center mb-8">
+
+                <h2 className="text-white text-3xl font-bold">
+                  Sign In
+                </h2>
+
+                <p className="text-gray-400 text-sm">
+                  Enter credentials
+                </p>
+
+              </div>
+
+              <form
+                className="space-y-6"
+                onSubmit={onFormSubmit}
+              >
+
+                {/* Email */}
+
+                <div>
+
+                  <label className="text-gray-300 text-sm mb-2 block">
+                    Email
+                  </label>
+
+                  <div className="relative">
+
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+
+                    <input
+                      type="email"
+                      value={loginData.email}
+                      onChange={(e) =>
+                        setLoginData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                      placeholder="hello@mail.com"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 py-3 text-white outline-none focus:border-amber-400"
+                    />
+
+                  </div>
+
+                </div>
+
+                {/* Password */}
+
+                <div>
+
+                  <label className="text-gray-300 text-sm mb-2 block">
+                    Password
+                  </label>
+
+                  <div className="relative">
+
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+
+                    <input
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      value={loginData.password}
+                      onChange={(e) =>
+                        setLoginData((prev) => ({
+                          ...prev,
+                          password:
+                            e.target.value,
+                        }))
+                      }
+                      placeholder="••••••••"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-12 py-3 text-white outline-none focus:border-amber-400"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          !showPassword
+                        )
+                      }
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                    >
+                      {showPassword ? (
+                        <EyeOff />
+                      ) : (
+                        <Eye />
+                      )}
+                    </button>
+
+                  </div>
+
+                </div>
+
+                {/* Extra */}
+
+                <div className="flex justify-between text-sm">
+
+                  <label className="text-gray-400">
+
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                    />
+
+                    Remember me
+
+                  </label>
+
+                  <Link
+                    to="/forgot-password"
+                    className="text-amber-400"
+                  >
+                    Forgot Password?
+                  </Link>
+
+                </div>
+
+                {/* Button */}
+
+                <button
+                  disabled={loader}
+                  type="submit"
+                  className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition
+                  
+                  ${
+                    loader
+                      ? "bg-gray-600"
+                      : "bg-amber-500 hover:bg-amber-600"
+                  }
+                  
+                  `}
+                >
+
+                  {loader ? (
+                    "Loading..."
+                  ) : (
+                    <>
+                      <LogIn />
+                      Sign In
+                      <ArrowRight />
+                    </>
+                  )}
+
+                </button>
+
+              </form>
+
+            </div>
+
+          </div>
+
         </div>
 
-        {/* Brand Footer */}
-        <p className="text-center text-white/20 text-[10px] mt-6 tracking-[0.3em] uppercase">
-          Global Goods Nocturnal Essentials
-        </p>
       </div>
+
     </div>
   );
 }

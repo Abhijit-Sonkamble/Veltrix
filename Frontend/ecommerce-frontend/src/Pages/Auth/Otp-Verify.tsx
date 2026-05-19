@@ -1,162 +1,339 @@
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router";
-import { OTPVerify } from "../../services/auth/authService";
+import { ForgotPassword, OTPVerify } from "../../services/auth/authService";
+import {
+  Shield,
+  Sparkles,
+  KeyRound,
+  ArrowRight,
+} from "lucide-react";
 
 export default function OTPVerifyPage() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [second, setSecond]= useState(59);
-  const [minute, setMinute]= useState(1);
+  const [myTimer, setMyTimer] = useState<number>(120);
   const [loader, setLoader] = useState(false);
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
 
-  //For timeout
-  useEffect(()=>{
-  let mySecond = 59;
+  // timer logic same
+  useEffect(() => {
+    if (myTimer <= 0) return;
 
- let time =   setInterval(()=>{
+    let time = setInterval(() => {
+      setMyTimer((s) => s - 1);
+    }, 1000);
 
-      mySecond--;
-      if (mySecond == 0) {
-        setMinute(0);
-        mySecond=59;
+    return () => clearInterval(time);
+  }, [myTimer]);
 
-        return;
-      }
-      else{
-        setSecond(mySecond)
-      }
-       if (minute === 0 && mySecond === 0) {
-      clearInterval(time)
-    }
-    
-    },100)
+  const minute = Math.floor(myTimer / 60)
+    .toString()
+    .padStart(2, "0");
 
+  const second = (myTimer % 60)
+    .toString()
+    .padStart(2, "0");
 
-  }, [])
-
-  // Handle Box Input Logic
-  const handleChange = (element: HTMLInputElement, index: number) => {
+  // same logic
+  const handleChange = (
+    element: HTMLInputElement,
+    index: number
+  ) => {
     if (isNaN(Number(element.value))) return false;
 
-    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+    setOtp([
+      ...otp.map((d, idx) =>
+        idx === index ? element.value : d
+      ),
+    ]);
 
-    // Move to next box
     if (element.value !== "" && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (
+      e.key === "Backspace" &&
+      !otp[index] &&
+      index > 0
+    ) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  const onFormSubmit = async (event: React.FormEvent) => {
+  const onFormSubmit = async (
+    event: React.FormEvent
+  ) => {
     event.preventDefault();
+
     const finalOtp = otp.join("");
-    
-    if (finalOtp.length < 6) return toast.error("Please enter full 6-digit OTP");
+
+    if (finalOtp.length < 6)
+      return toast.error(
+        "Please enter full 6-digit OTP"
+      );
 
     setLoader(true);
 
-        const data = await OTPVerify(finalOtp) //Ya madhe aapn otp he final otp madhe save hote tyamule aapn tithe bracket madhe final otp thevle
+    const data = await OTPVerify(finalOtp);
 
-      if (data.status === 200) {
-        toast.success("OTP Verified Successfully");
-        navigate("/new-password");
-      } else {
-        toast.error(data.message || "Invalid OTP");
-      }
+    if (data.status === 200) {
+      toast.success(
+        "OTP Verified Successfully"
+      );
+
+      navigate("/new-password");
+    } else {
+      toast.error(
+        data.message || "Invalid OTP"
+      );
+    }
 
     setLoader(false);
-    
+  };
+
+  const resetOTP = async () => {
+    const email =
+      sessionStorage.getItem("email") || "";
+
+    const dataOTP =
+      await ForgotPassword(email);
+
+    if (dataOTP.status === 200) {
+      toast.success(dataOTP.message);
+
+      setMyTimer(120);
+    } else {
+      toast.error(dataOTP.message);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e27] flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px]"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[150px]"></div>
+    <div className="min-h-screen bg-[#0A0F1E] flex items-center justify-center p-4 relative overflow-hidden">
 
-      <div className="w-full max-w-md z-10">
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl">
-          
-          {/* Header */}
-          <div className="flex flex-col items-center mb-10">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center mb-6 shadow-[0_20px_40px_rgba(79,70,229,0.4)]">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-            <h2 className="text-white text-3xl font-extrabold tracking-tight">Verify Identity 0{minute} : {second}</h2>
-            <p className="text-indigo-200/50 text-center text-sm mt-3 leading-relaxed">
-              We've sent a 6-digit code to your email. <br/> Enter it below to proceed.
-            </p>
-          </div>
+      {/* background */}
 
-          <form className="space-y-10" onSubmit={onFormSubmit}>
-            {/* 6-Digit Input Group */}
-            <div className="flex justify-between gap-2">
-              {otp.map((data, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  maxLength={1}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  value={data}
-                  onChange={(e) => handleChange(e.target, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  className="w-12 h-14 bg-white/5 border border-white/10 rounded-xl text-center text-2xl font-bold text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white/10 transition-all"
-                />
-              ))}
-            </div>
+      <div className="absolute inset-0 overflow-hidden">
 
-            {/* Action Button */}
-            <button
-              type="submit"
-              disabled={loader}
-              className={`
-                group relative overflow-hidden w-full font-bold py-4 rounded-2xl transition-all duration-500 active:scale-95
-                flex items-center justify-center
-                ${loader 
-                  ? "bg-indigo-900 text-indigo-300" 
-                  : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40"
-                }
-              `}
-            >
-              {loader ? (
-                <div className="flex items-center gap-3">
-                  <div className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full"></div>
-                  <span className="tracking-widest uppercase text-xs">Verifying...</span>
-                </div>
-              ) : (
-                <span className="uppercase tracking-widest text-xs font-bold">Verify & Proceed</span>
-              )}
-            </button>
-          </form>
+        <div className="absolute inset-0 bg-linear-to-br from-[#0A0F1E] via-[#0F1629] to-[#0A0F1E]" />
 
-          {/* Resend Logic */}
-          <div className="mt-10 text-center space-y-4">
-            <p className="text-indigo-200/40 text-sm">
-              Didn't receive the code? {" "}
-              <button className="text-indigo-400 hover:text-white transition-colors font-medium">Resend Code</button>
-            </p>
-            
-            <Link 
-              to="/login" 
-              className="inline-flex items-center gap-2 text-indigo-300/60 hover:text-white transition-colors text-xs uppercase tracking-widest group"
-            >
-              <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Back to Login
-            </Link>
-          </div>
-        </div>
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] animate-pulse"></div>
+
+        <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] animate-pulse"></div>
+
+        <div className="absolute top-1/2 left-1/2 w-162.5 h-162.5 bg-blue-500/5 rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2"></div>
+
       </div>
+
+      {/* card */}
+
+      <div className="relative w-full max-w-5xl bg-white/3 backdrop-blur-2xl rounded-3xl border border-white/10 overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,.7)]">
+
+        <div className="flex flex-col lg:flex-row">
+
+          {/* left side */}
+
+          <div className="lg:w-1/2 bg-linear-to-br from-[#0F1629] via-[#0A0F1E] to-[#0F1629] p-10 flex flex-col justify-between">
+
+            <div>
+
+              <div className="flex items-center gap-2 mb-12">
+
+                <KeyRound className="w-8 h-8 text-amber-400"/>
+
+                <span className="text-2xl font-bold text-white">
+                  OTP Verify
+                </span>
+
+                <Sparkles className="w-4 h-4 text-amber-400"/>
+
+              </div>
+
+              <div className="space-y-6">
+
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+
+                  <Shield className="w-4 h-4 text-amber-400"/>
+
+                  <span className="text-xs text-amber-400">
+                    SECURE VALIDATION
+                  </span>
+
+                </div>
+
+                <h1 className="text-5xl font-bold text-white leading-tight">
+
+                  Verify your
+                  <span className="block bg-linear-to-r from-amber-400 to-white bg-clip-text text-transparent">
+                    identity
+                  </span>
+
+                </h1>
+
+                <p className="text-gray-400 leading-relaxed">
+
+                  We sent a secure 6-digit verification
+                  code to your email address.
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="border-t border-white/10 pt-6 mt-10">
+
+              <div className="flex gap-3">
+
+                <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+
+                  <Shield className="w-5 h-5 text-amber-400"/>
+
+                </div>
+
+                <div>
+
+                  <p className="text-white text-sm">
+                    Protected Verification
+                  </p>
+
+                  <p className="text-gray-500 text-xs">
+                    Fully encrypted security flow
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* right */}
+
+          <div className="lg:w-1/2 p-10 flex items-center">
+
+            <div className="w-full max-w-md mx-auto">
+
+              <div className="mb-8">
+
+                <h2 className="text-white text-3xl font-bold">
+                  Enter OTP
+                </h2>
+
+                <p className="text-gray-400 text-sm mt-2">
+                  Enter your 6 digit verification code
+                </p>
+
+              </div>
+
+              <form
+                className="space-y-8"
+                onSubmit={onFormSubmit}
+              >
+
+                <div className="flex justify-between gap-3">
+
+                  {otp.map((data, index) => (
+                    <input
+                      key={index}
+                      type="text"
+                      maxLength={1}
+                      ref={(el) => {
+                        inputRefs.current[index] = el;
+                      }}
+                      value={data}
+                      onChange={(e) =>
+                        handleChange(
+                          e.target,
+                          index
+                        )
+                      }
+                      onKeyDown={(e) =>
+                        handleKeyDown(
+                          e,
+                          index
+                        )
+                      }
+                      className="w-14 h-16 rounded-xl bg-white/5 border border-white/10 text-center text-2xl font-bold text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
+                    />
+                  ))}
+
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loader}
+                  className={`w-full rounded-xl py-4 font-semibold transition-all duration-300 flex items-center justify-center gap-2
+
+                  ${
+                    loader
+                      ? "bg-gray-700"
+                      : "bg-linear-to-r from-amber-500 to-amber-600 hover:scale-[1.02] hover:shadow-lg hover:shadow-amber-500/30"
+                  }
+                  `}
+                >
+
+                  {loader ? (
+                    <div className="flex items-center gap-3">
+
+                      <div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
+
+                      Verifying...
+
+                    </div>
+                  ) : (
+                    <>
+                      Verify OTP
+                      <ArrowRight className="w-4 h-4"/>
+                    </>
+                  )}
+
+                </button>
+
+              </form>
+
+              <div className="mt-8 text-center space-y-4">
+
+                <p className="text-gray-500">
+
+                  Didn't receive OTP?{" "}
+
+                  <button
+                    onClick={resetOTP}
+                    className="text-amber-400 hover:text-amber-300"
+                  >
+                    {minute === "00" &&
+                    second === "00"
+                      ? "Resend OTP"
+                      : `${minute}:${second}`}
+                  </button>
+
+                </p>
+
+                <Link
+                  to="/login"
+                  className="text-gray-400 hover:text-amber-400 transition"
+                >
+                  ← Back to Login
+                </Link>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
