@@ -1,4 +1,3 @@
-import React from 'react';
 import { Save, Tags, UploadCloud } from 'lucide-react';
 
 export const AddCategory = () => {
@@ -8,7 +7,7 @@ export const AddCategory = () => {
         <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
           <Tags className="text-indigo-400" /> Create Category
         </h1>
-        <button className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white px-5 py-2 rounded-lg font-medium hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all">
+        <button className="flex items-center gap-2 bg-linear-to-r from-indigo-500 to-cyan-500 text-white px-5 py-2 rounded-lg font-medium hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all">
           <Save size={18} /> Save Category
         </button>
       </div>

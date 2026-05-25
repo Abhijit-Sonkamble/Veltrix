@@ -28,13 +28,16 @@ module.exports = class AdminAuthService {
     }
 
     //Fetch All Admin
-    async fetchAllAdmin(){
-        try {
-            return await Admin.find().select('_id name last_name email isActive create_at update_at') //Select madhe kay kay disala pahije he dakhvtat
-        } catch (error) {
-            console.log("Admin Not Fetched....!");
-        }
+    async fetchAllAdmin(body){
+    try {
+        return await Admin.find(body)
+        .select('_id name last_name email profile_image isActive create_at update_at');
+
+    } catch(error){
+        console.log("Admin Not Fetched", error);
+        throw error;
     }
+}
 
     //OTP // update sathi pn use hoil true false karala
     async updateAdmin(id, body){

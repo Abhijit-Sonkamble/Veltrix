@@ -1,4 +1,3 @@
-import { DataTable } from '../../components/dashboard/DataTable';
 
 const dummyCategories = [
   { id: 'CAT-1', name: 'Electronics', totalProducts: 145, status: 'Active' },
@@ -19,7 +18,6 @@ export const ViewCategory = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-white tracking-tight">Categories</h1>
       </div>
-      <DataTable title="Manage Categories" columns={columns} data={dummyCategories} />
     </div>
   );
 };

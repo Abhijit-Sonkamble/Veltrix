@@ -1,5 +1,3 @@
-import { DataTable } from '../../components/dashboard/DataTable';
-
 const dummySubCategories = [
   { id: 'SUB-01', name: 'Smartphones', parent: 'Electronics', products: 85, status: 'Active' },
   { id: 'SUB-02', name: 'Laptops', parent: 'Electronics', products: 42, status: 'Active' },
@@ -23,7 +21,6 @@ export const ViewSubCategory = () => {
           <h1 className="text-2xl font-bold text-white tracking-tight">SubCategories</h1>
         </div>
       </div>
-      <DataTable title="Manage SubCategories" columns={columns} data={dummySubCategories} />
     </div>
   );
 };

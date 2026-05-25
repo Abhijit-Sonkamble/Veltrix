@@ -1,4 +1,3 @@
-import { DataTable } from '../../components/dashboard/DataTable';
 import type { Order } from '../../types/index';
 
 const dummyOrders: Order[] = [
@@ -26,12 +25,6 @@ export const Orders = () => {
           <p className="text-slate-400 text-sm mt-1">View and manage customer transactions.</p>
         </div>
       </div>
-      
-      <DataTable 
-        title="Recent Orders" 
-        columns={columns} 
-        data={dummyOrders} 
-      />
     </div>
   );
 };

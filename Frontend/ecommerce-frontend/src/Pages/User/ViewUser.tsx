@@ -1,5 +1,3 @@
-import { DataTable } from '../../components/dashboard/DataTable';
-
 const dummyUsers = [
   { id: 'USR-8431', name: 'Alice Smith', email: 'alice@example.com', phone: '+1 234-567-8901', status: 'Active' },
   { id: 'USR-8432', name: 'Bob Johnson', email: 'bob@example.com', phone: '+1 987-654-3210', status: 'Pending' },
@@ -24,7 +22,6 @@ export const ViewUser = () => {
           <p className="text-slate-400 text-sm mt-1">View and manage registered users.</p>
         </div>
       </div>
-      <DataTable title="All Registered Users" columns={columns} data={dummyUsers} />
     </div>
   );
 };
