@@ -11,6 +11,7 @@ import {
   KeyRound,
   ArrowRight,
 } from "lucide-react";
+import { allRoutes } from "../../routes/route";
 
 export default function NewPasswordPage() {
   const [newPasswordData, setNewPasswordData] =
@@ -73,7 +74,7 @@ export default function NewPasswordPage() {
 
         sessionStorage.clear();
 
-        navigate("/login");
+        navigate(allRoutes.login);
       } else {
         toast.error(
           data.message ||

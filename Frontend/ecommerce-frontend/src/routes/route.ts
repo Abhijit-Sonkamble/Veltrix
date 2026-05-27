@@ -19,57 +19,85 @@ import { AddSubCategory } from "../Pages/SubCategory/AddSubCategory";
 import { ViewSubCategory } from "../Pages/SubCategory/ViewSubCategory";
 // Import other pages like AddAdmin, AddProducts here
 
+//All Routes
+export const allRoutes = {
+    login : '/login',
+    forgotPassword : '/forgot-password',
+    otpVerify : '/otp-verify',
+    newPassword : '/new-password',
+    dashboard : '/dashboard',
+    addAdmin : 'addAdmin',
+    viewAdmin : 'viewAdmin',
+    orders : 'orders',
+    addProduct : 'addProduct',
+    ViewProducts : 'viewProducts',
+    addUser : 'addUser',
+    viewUser : 'viewUser',
+    addCategory : 'addCategory',
+    viewCategory : 'viewCategory',
+    addSubcategory : 'addSubcategory',
+    viewSubcategory : 'viewSubcategory',
+    addExtracategory : 'addExtracategory',
+    viewExtracategory : 'viewExtracategory',
+
+}
+
 export const router = createBrowserRouter([
     {
         path: '/',
         Component: App,
         children: [
             {
-                path: 'login',
+                path: allRoutes.login,
                 Component: LoginPage
             },
             {
-                path: 'forgot-password',
+                path: allRoutes.forgotPassword,
                 Component: ForgotPasswordPage
             },
             {
-                path: 'otp-verify',
+                path: allRoutes.otpVerify,
                 Component: OTPVerifyPage
             },
             {
-                path: 'new-password',
+                path: allRoutes.newPassword,
                 Component: NewPasswordPage
             },
 
             {
-                path: '', // Base path for dashboard components
+                path: allRoutes.dashboard, // Base path for dashboard components
                 Component: AppLayout, // Ye layout ab inn sabke charo taraf apply hoga
                 children: [
                     {
-                        path: 'dashboard',
+                        path: allRoutes.dashboard,
                         Component: Home
                     },
                     // Yaha aap apne baaki admin/product routes daal sakte hain:
-                    { path: 'orders', Component: Orders },
-                    { path: 'products/add', Component: AddProducts },
-                    { path: 'products/view', Component: ViewProducts     },
+                    { path: allRoutes.orders, Component: Orders },
+
+                    { path: allRoutes.addProduct, Component: AddProducts },
+                    { path: allRoutes.ViewProducts, Component: ViewProducts     },
 
                     //Admin
-                    { path: 'admin/add', Component: AddAdmin },
-                    { path: 'admin/view', Component: ViewAdmin },
+                    { path: allRoutes.addAdmin, Component: AddAdmin },
+                    { path: allRoutes.viewAdmin, Component: ViewAdmin },
 
 
                     //User
-                    { path: 'user/add', Component: AddUser },
-                    { path: 'user/view', Component: ViewUser },
+                    { path: allRoutes.addUser, Component: AddUser },
+                    { path: allRoutes.viewUser, Component: ViewUser },
 
                     //Category
-                    { path: 'category/add', Component: AddCategory },
-                    { path: 'category/view', Component: ViewCategory },
+                    { path: allRoutes.addCategory, Component: AddCategory },
+                    { path: allRoutes.viewCategory, Component: ViewCategory },
 
                     //SubCategory
-                    { path: 'subcategory/add', Component: AddSubCategory },
-                    { path: 'subcategory/view', Component: ViewSubCategory },
+                    { path: allRoutes.addSubcategory, Component: AddSubCategory },
+                    { path: allRoutes.viewSubcategory, Component: ViewSubCategory },
+
+                    //Extra Category
+                    { path: allRoutes.addExtracategory, Component: ViewSubCategory },
+                    { path: allRoutes.viewExtracategory, Component: ViewSubCategory },
                 ]
             }
         ]

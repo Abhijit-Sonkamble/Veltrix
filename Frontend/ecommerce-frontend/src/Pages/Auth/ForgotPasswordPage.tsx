@@ -9,6 +9,7 @@ import {
   Sparkles,
   KeyRound,
 } from "lucide-react";
+import { allRoutes } from "../../routes/route";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -37,7 +38,7 @@ export default function ForgotPasswordPage() {
 
         sessionStorage.setItem("email", email);
 
-        navigate("/otp-verify");
+        navigate(allRoutes.otpVerify);
       } else {
         toast.error(data.message);
       }

@@ -1,26 +1,26 @@
-import { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router'; // Outlet import karna zaroori hai
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router"; // Outlet import karna zaroori hai
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { allRoutes } from "./routes/route";
 
 function App() {
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem("adminToken");
     if (token) {
       // Navigate Dashboard
-      navigate('/dashboard');
+      navigate(allRoutes.dashboard);
     } else {
       // Navigate Login Page
-      navigate('/login');
+      navigate(allRoutes.login);
     }
   }, []);
   return (
     <>
       {/* Global Notifications jo har page par available rahengi */}
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         theme="dark"
@@ -28,7 +28,7 @@ function App() {
       />
 
       {/* Outlet wo jagah hai jahan router dynamically aapke pages (Login, Dashboard) render karega */}
-      <Outlet /> 
+      <Outlet />
     </>
   );
 }

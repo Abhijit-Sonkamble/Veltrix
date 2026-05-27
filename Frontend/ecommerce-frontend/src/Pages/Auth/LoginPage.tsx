@@ -14,6 +14,7 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
+import { allRoutes } from "../../routes/route";
 
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({
@@ -46,7 +47,7 @@ export default function LoginPage() {
           data.result.token
         );
 
-        navigate("/dashboard");
+        navigate(allRoutes.dashboard);
       } else {
         toast.error(data.message);
       }
@@ -293,7 +294,7 @@ export default function LoginPage() {
                   </label>
 
                   <Link
-                    to="/forgot-password"
+                    to={allRoutes.forgotPassword}
                     className="text-amber-400"
                   >
                     Forgot Password?

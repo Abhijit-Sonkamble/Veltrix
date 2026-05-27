@@ -18,65 +18,70 @@ import {
   Boxes,
 } from "lucide-react";
 import type { MenuItem } from "../../types/index";
-
-const menuItems: MenuItem[] = [
-  { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-  {
-    title: "Admin",
-    icon: UserCog,
-    children: [
-      { title: "Add Admin", path: "/admin/add" },
-      { title: "View Admin", path: "/admin/view" },
-    ],
-  },
-  {
-    title: "User",
-    icon: Users,
-    children: [
-      { title: "Add User", path: "/user/add" },
-      { title: "View User", path: "/user/view" },
-    ],
-  },
-  {
-    title: "Category",
-    icon: Tags,
-    children: [
-      { title: "Add Category", path: "/category/add" },
-      { title: "View Category", path: "/category/view" },
-    ],
-  },
-  {
-    title: "Sub Category",
-    icon: Layers,
-    children: [
-      { title: "Add Sub Category", path: "/subcategory/add" },
-      { title: "View Sub Category", path: "/subcategory/view" },
-    ],
-  },
-{
-    title: "Extra Category",
-    icon: Boxes, 
-    children: [
-      { title: "Add Extra Category", path: "/extracategory/add" },
-      { title: "View Extra Category", path: "/extracategory/view" },
-    ],
-  },
-  {
-    title: "Products",
-    icon: PackageSearch,
-    children: [
-      { title: "Add Products", path: "/products/add" },
-      { title: "View Products", path: "/products/view" },
-    ],
-  },
-  { title: "Orders", icon: ShoppingCart, path: "/orders" },
-];
+import { allRoutes } from "../../routes/route";
 
 export const AppLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const menuItems: MenuItem[] = [
+    {
+      title: "Dashboard",
+      icon: LayoutDashboard,
+      path: `${allRoutes.dashboard}`,
+    },
+    {
+      title: "Admin",
+      icon: UserCog,
+      children: [
+        { title: "Add Admin", path: allRoutes.addAdmin },
+        { title: "View Admin", path: allRoutes.viewAdmin },
+      ],
+    },
+    {
+      title: "User",
+      icon: Users,
+      children: [
+        { title: "Add User", path: allRoutes.addUser },
+        { title: "View User", path: allRoutes.viewUser },
+      ],
+    },
+    {
+      title: "Category",
+      icon: Tags,
+      children: [
+        { title: "Add Category", path: allRoutes.addCategory },
+        { title: "View Category", path: allRoutes.viewCategory },
+      ],
+    },
+    {
+      title: "Sub Category",
+      icon: Layers,
+      children: [
+        { title: "Add Sub Category", path: allRoutes.addSubcategory },
+        { title: "View Sub Category", path: allRoutes.viewSubcategory },
+      ],
+    },
+    {
+      title: "Extra Category",
+      icon: Boxes,
+      children: [
+        { title: "Add Extra Category", path: allRoutes.addExtracategory },
+        { title: "View Extra Category", path: allRoutes.viewExtracategory },
+      ],
+    },
+    {
+      title: "Products",
+      icon: PackageSearch,
+      children: [
+        { title: "Add Products", path: allRoutes.addProduct },
+        { title: "View Products", path: allRoutes.ViewProducts},
+      ],
+    },
+    { title: "Orders", icon: ShoppingCart, path: allRoutes.orders },
+  ];
 
   return (
     <div className="flex h-screen bg-slate-950 text-slate-200 overflow-hidden font-sans selection:bg-indigo-500/30">

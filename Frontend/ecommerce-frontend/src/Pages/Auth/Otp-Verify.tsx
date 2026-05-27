@@ -8,6 +8,7 @@ import {
   KeyRound,
   ArrowRight,
 } from "lucide-react";
+import { allRoutes } from "../../routes/route";
 
 export default function OTPVerifyPage() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -88,7 +89,7 @@ export default function OTPVerifyPage() {
         "OTP Verified Successfully"
       );
 
-      navigate("/new-password");
+      navigate(allRoutes.newPassword);
     } else {
       toast.error(
         data.message || "Invalid OTP"
